@@ -16,7 +16,7 @@ import { ReportesComponent } from './reportes/reportes.component';
     InicioComponent,
     NavbarComponent,
     UsuariosComponent,
-    ReportesComponent
+    ReportesComponent,
   ],
   imports: [
     CommonModule,

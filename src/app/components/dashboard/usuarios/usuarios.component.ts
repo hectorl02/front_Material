@@ -1,8 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator} from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Usuario } from 'src/app/interfaces/usuario';
+import { UsuarioService } from 'src/app/services/usuario.service';
 
 
 @Component({
@@ -12,28 +14,27 @@ import { Usuario } from 'src/app/interfaces/usuario';
 })
 export class UsuariosComponent implements OnInit {
 
-  
-listUsuarios: Usuario[] = [
-  {us: "hectogfhdfrl2", nombre: 'Hector', apellido: "Lopez", sexo: "m"},
-  {us: "hectorlzv0fdzv2", nombre: 'jaime', apellido: "pastas", sexo: "m"},
-  {us: "hectzcxvvorl02", nombre: 'rocio', apellido: "rosero", sexo: "m"},
-  {us: "hectofczcxvrl02", nombre: 'lucy', apellido: "bedoya", sexo: "m"},
-  {us: "hectorlq  w02", nombre: 'andres', apellido: "arango", sexo: "m"},
-  {us: "hectowq dQrl02", nombre: 'monica', apellido: "perez", sexo: "m"},
-  {us: "hec Qtorlvb 02", nombre: 'aleja', apellido: "masrea", sexo: "m"},
-  
-];
-
+  listUsuario: Usuario[] =[];
   displayedColumns: string[] = ['us', 'nombre', 'apellido', 'sexo', "acciones"];
-  dataSource = new MatTableDataSource(this.listUsuarios);
+  dataSource! :MatTableDataSource<any>
 
   @ViewChild(MatPaginator)paginator!:MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor() { }
+  constructor(
+    private snackB:MatSnackBar,
+    private usuarioService: UsuarioService
+  ) { }
 
   ngOnInit(): void {
+    this.cargarUsuario();
   }
+
+  cargarUsuario(){
+    this.listUsuario = this.usuarioService.getUsuario();
+    this.dataSource= new MatTableDataSource(this.listUsuario)
+  }
+
   
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
@@ -43,6 +44,16 @@ listUsuarios: Usuario[] = [
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  eliminarUs(index: number){
+    this.usuarioService.eliminarUsua(index);
+    this.cargarUsuario();
+    this.snackB.open('Usuario eliminado','',{
+      duration:500,
+      horizontalPosition: 'center',
+      verticalPosition: 'top'
+    })
   }
 
 }
